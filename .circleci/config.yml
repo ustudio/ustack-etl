@@ -54,8 +54,48 @@ jobs:
 
       - store_test_results:
           path: test-reports
+  publish:
+    docker:
+      - image: circleci/python:3.7
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-publish-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv ~/venv
+            . ~/venv/bin/activate
+            pip install twine
+
+      - save_cache:
+          paths:
+            - ~/venv
+          key: v1-publish-dependencies-
+
+      - run:
+          name: Publish to PyPI
+          command: |
+            . ~/venv/bin/activate
+            ./publish_to_pypi.sh
 workflows:
   version: 2
   test-and-build:
     jobs:
-      - test
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - publish:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*.*/
+            branches:
+              ignore: /.*/
+          context: org-global
