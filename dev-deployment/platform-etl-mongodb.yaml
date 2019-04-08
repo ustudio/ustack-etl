@@ -1,0 +1,29 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: ustack-etl-mongodb
+  labels:
+    app: ustack-etl-testing
+    role: mongo-db
+  namespace: ustack-etl-testing
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ustack-etl-testing
+        role: mongo-db
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:3.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: mongo
+              containerPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongo-persistent-storage
+          emptyDir: {}

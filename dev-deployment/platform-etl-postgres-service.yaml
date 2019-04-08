@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ustack-etl-postgres
+  labels:
+    app: ustack-etl-testing
+    role: postgres-db
+  namespace: ustack-etl-testing
+spec:
+  ports:
+    - port: 5432
+      targetPort: postgres
+  selector:
+    app: ustack-etl-testing
+    role: postgres-db
+  type: NodePort
