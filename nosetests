@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+POSTGRES_STATE=$(kubectl get pod \
+    --namespace ustack-etl-testing \
+    --selector role=postgres-db,app=ustack-etl-testing \
+    --output jsonpath='{.items[0].status.phase}' 2> /dev/null)
+if [[ "${POSTGRES_STATE}" != "Running" ]]
+then
+    CONTEXT="$(kubectl config current-context)"
+    echo "ERROR: ustack-etl-postgres pod is not running in the current context (${CONTEXT})."
+    exit 1
+fi
+export SQL_URI="$(minikube service --namespace=ustack-etl-testing --url --format='postgresql://postgres@{{.IP}}:{{.Port}}/testing' ustack-etl-postgres)"
+
+MONGO_STATE=$(kubectl get pod \
+    --namespace ustack-etl-testing \
+    --selector role=mongo-db,app=ustack-etl-testing \
+    --output jsonpath='{.items[0].status.phase}' 2> /dev/null)
+if [[ "${MONGO_STATE}" != "Running" ]]
+then
+    CONTEXT="$(kubectl config current-context)"
+    echo "ERROR: ustack-etl-mongodb pod is not running in the current context (${CONTEXT})."
+    exit 1
+fi
+export MONGODB_URI="$(minikube service --namespace=ustack-etl-testing --url --format='mongodb://{{.IP}}:{{.Port}}/testing' ustack-etl-mongodb)"
+
+nosetests "$@"

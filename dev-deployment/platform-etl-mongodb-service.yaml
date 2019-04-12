@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ustack-etl-mongodb
+  labels:
+    app: ustack-etl-testing
+    role: mongo-db
+  namespace: ustack-etl-testing
+spec:
+  ports:
+    - port: 27017
+      targetPort: mongo
+  selector:
+    app: ustack-etl-testing
+    role: mongo-db
+  type: NodePort

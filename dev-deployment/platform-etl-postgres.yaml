@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: ustack-etl-postgres
+  labels:
+    app: ustack-etl-testing
+    role: postgres-db
+  namespace: ustack-etl-testing
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ustack-etl-testing
+        role: postgres-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:9.6-alpine
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_DB
+              value: ustack-etl-testing
+          ports:
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - name: postgres-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-persistent-storage
+          emptyDir: {}
