@@ -165,7 +165,7 @@ MONGODB_URI and SQL_URI.
 
 If you are running a local Kubernetes cluster using `minikube`, you
 can run `./start-databases.sh` to create the appropriate databases,
-then run `./nosetests` to run the unit tests against the databases
+then run `./pytest` to run the unit tests against the databases
 running inside minikube.
 
 If you wish to run your own instances of MongoDB and SQL, you can set

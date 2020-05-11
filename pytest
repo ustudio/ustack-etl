@@ -24,4 +24,4 @@ then
 fi
 export MONGODB_URI="$(minikube service --namespace=ustack-etl-testing --url --format='mongodb://{{.IP}}:{{.Port}}/testing' ustack-etl-mongodb)"
 
-nosetests "$@"
+pytest "$@"
